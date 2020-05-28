@@ -1,0 +1,118 @@
+<Interface xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../Interface.xsd">
+    <Scripts>
+        <Script file="MegaphonePlusPlus.lua" />
+    </Scripts>
+
+    <Windows>
+        <Window name="MegaphoneMain" layer="popup" movable="true" savesettings="false">
+            <Size>
+                <AbsPoint x="720" y="280" />
+            </Size>
+
+            <Anchors>
+                <Anchor point="center" relativePoint="center" relativeTo="Root">
+                    <AbsPoint x="0" y="0" />
+                </Anchor>
+            </Anchors>
+
+            <Windows>
+				<DynamicImage name="$parentWindowImage" inherits="EA_Default_SocialImage" />
+				<Window name="$parentTitleBar" inherits="EA_TitleBar_Default"/>
+				<Button name="$parentClose" inherits="EA_Button_DefaultWindowClose" >
+					<EventHandlers>
+						<EventHandler event="OnLButtonUp" function="Megaphone.HideWindow"/>
+					</EventHandlers>
+				</Button>
+
+				<Window name="$parentBackground" inherits="EA_Window_DefaultBackgroundFrame">
+					<Anchors>
+						<Anchor point="topleft" relativePoint="topleft" relativeTo="$parent">
+							<AbsPoint x="0" y="32" />
+						</Anchor>
+						<Anchor point="bottomright" relativePoint="bottomright" relativeTo="$parent"/>
+					</Anchors>
+				</Window>
+
+				<Label name="$parentShowLeaderLabel" inherits="EA_Label_DefaultText_Small" textalign="left">
+					<Size><AbsPoint x="240" y="40" /></Size>
+					<Anchors>
+						<Anchor point="topleft" relativePoint="topleft" relativeTo="$parentBackground">
+							<AbsPoint x="48" y="32"/>
+						</Anchor>
+					</Anchors>
+				</Label>
+				<Button name="$parentShowLeaderCheckbox" inherits="EA_Button_DefaultCheckBox">
+					<Anchors>
+						<Anchor point="topright" relativePoint="topleft" relativeTo="$parentShowLeaderLabel">
+							<AbsPoint x="0" y="-2"/>
+						</Anchor>
+					</Anchors>
+					<EventHandlers>
+						<EventHandler event="OnLButtonUp"  function="Megaphone.ShowLeaderToggle" />
+					</EventHandlers>
+				</Button>
+				
+				<Label name="$parentSFXTitleLabel" inherits="EA_Label_DefaultText_Small">
+					<Size><AbsPoint x="240" y="40" /></Size>
+					<Anchors>
+						<Anchor point="topleft" relativePoint="topleft" relativeTo="$parentShowLeaderLabel">
+							<AbsPoint x="0" y="48" />
+						</Anchor>
+					</Anchors>
+					<!-- <EventHandlers>
+						<EventHandler event="OnMouseOver" function="Enemy.ConfigurationWindow_ShowTooltip" />
+					</EventHandlers> -->
+				</Label>
+				<ComboBox name="$parentSFXComboBox" inherits="EA_ComboBox_DefaultResizableLarge">
+					<Anchors>
+						<Anchor point="topright" relativePoint="topleft" relativeTo="$parentSFXTitleLabel">
+							<AbsPoint x="0" y="-6" />
+						</Anchor>
+					</Anchors>
+				</ComboBox>
+
+				<Label name="$parentFontTitleLabel" inherits="EA_Label_DefaultText_Small">
+					<Size><AbsPoint x="240" y="40" /></Size>
+					<Anchors>
+						<Anchor point="topleft" relativePoint="topleft" relativeTo="$parentSFXTitleLabel">
+							<AbsPoint x="0" y="48" />
+						</Anchor>
+					</Anchors>
+					<!-- <EventHandlers>
+						<EventHandler event="OnMouseOver" function="Enemy.ConfigurationWindow_ShowTooltip" />
+					</EventHandlers> -->
+				</Label>
+				<ComboBox name="$parentFontComboBox" inherits="EA_ComboBox_DefaultResizableLarge">
+					<Anchors>
+						<Anchor point="topright" relativePoint="topleft" relativeTo="$parentFontTitleLabel">
+							<AbsPoint x="0" y="-6" />
+						</Anchor>
+					</Anchors>
+				</ComboBox>
+
+				<Window name="$parentButtonBackground" inherits="EA_Window_DefaultButtonBottomFrame" layer="background" />
+
+                <Button name="$parentSaveButton" inherits="EA_Button_DefaultResizeable"  font="font_chat_text" textalign="center">
+                    <Anchors>
+                        <Anchor point="topleft" relativePoint="topright" relativeTo="$parentCloseButton">
+                            <AbsPoint x="-5" y="0" />
+                        </Anchor>
+                    </Anchors>
+                    <EventHandlers>
+                        <EventHandler event="OnLButtonUp" function="Megaphone.SaveSettings"/>
+                    </EventHandlers>
+                </Button>
+                <Button name="$parentCloseButton" inherits="EA_Button_DefaultResizeable"  font="font_chat_text" textalign="center">
+                    <Anchors>
+                        <Anchor point="bottomright" relativePoint="bottomright" >
+                            <AbsPoint x="-15" y="-10" />
+                        </Anchor>
+                    </Anchors>
+                    <EventHandlers>
+                        <EventHandler event="OnLButtonUp" function="Megaphone.HideWindow"/>
+                    </EventHandlers>
+                </Button>
+            </Windows>
+        </Window>
+    </Windows>
+</Interface>
