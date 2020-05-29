@@ -5,7 +5,7 @@
 		<Author name="Tim Neill" email="kinghfb@gmail.com" />
 		<Author name="kinghfb" version= "1.0"/>
 		<Description text="Announces group leader's texts on screen. Never miss a command!" />
-		<VersionSettings gameVersion="1.4.0" windowsVersion="1.0" savedVariablesVersion="1.0" />
+		<VersionSettings gameVersion="1.4.1" windowsVersion="1.0" savedVariablesVersion="1.0" />
 
 		<Dependencies>
 			<Dependency name="EA_ChatWindow" />
@@ -17,6 +17,8 @@
 		<Files>
 			<File name="MegaphonePlusPlus.lua" />
 			<File name="MegaphonePlusPlus.xml" />
+
+            <!-- <File name="Textures/EA_ScenarioSummary01_d5.xml" /> -->
 		</Files>
 
 		<SavedVariables>
@@ -28,7 +30,7 @@
 		</OnInitialize>
 		
 		<OnShutdown>
-			<CallFunction name="PTLeader.OnShutdown" />
+			<CallFunction name="Megaphone.OnShutdown" />
 		</OnShutdown>
 
 		<OnUpdate/>
