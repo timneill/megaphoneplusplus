@@ -147,6 +147,7 @@ function Megaphone.Initialize()
   RegisterEventHandler(SystemData.Events.INTERFACE_RELOADED, "Megaphone.GroupUpdate")
   RegisterEventHandler(SystemData.Events.GROUP_LEAVE, "Megaphone.Refresh")
   RegisterEventHandler(SystemData.Events.LOADING_END, "Megaphone.Refresh")
+  RegisterEventHandler(SystemData.Events.PLAYER_ZONE_CHANGED, "Megaphone.Refresh")
   
 	LibSlash.RegisterSlashCmd("megaphonepp", Megaphone.ShowConfig)
   LibSlash.RegisterSlashCmd("mppp", Megaphone.ShowConfig)
@@ -164,6 +165,7 @@ function Megaphone.OnShutdown()
   UnregisterEventHandler(SystemData.Events.INTERFACE_RELOADED, "Megaphone.GroupUpdate")
   UnregisterEventHandler(SystemData.Events.GROUP_LEAVE, "Megaphone.Refresh")
   UnregisterEventHandler(SystemData.Events.LOADING_END, "Megaphone.Refresh")
+  UnregisterEventHandler(SystemData.Events.PLAYER_ZONE_CHANGED, "Megaphone.Refresh")
 end
 ----------------------------------------------------------------
 
@@ -171,8 +173,10 @@ end
 ----------------------------------------------------------------
 function Megaphone.CreateWindows()
   CreateWindow(Megaphone.Windows.Main, true)
-  CreateWindow(Megaphone.Windows.Marker, false)
-	Megaphone.HideWindow()
+  Megaphone.HideWindow()
+
+  CreateWindow(Megaphone.Windows.Marker, true)
+  Megaphone.DetachMarker()
   
 	LabelSetText(Megaphone.Windows.Main.."TitleBarText", L"Megaphone++")
   ButtonSetText(Megaphone.Windows.Main.."CloseButton", L"Close")
@@ -301,12 +305,16 @@ function Megaphone.AssignLeader()
   if leader ~= nil then
     chatNameFilter = Megaphone.CleanPlayerName(leader.name)
     leaderId = leader.worldObjNum
-  end
-
-  -- Comparing IDs breaks if the leader is out of range. Use the name instead
-  if lastKnownLeader ~= chatNameFilter then
-      printMsg("Found new leader - " .. WStringToString(chatNameFilter))
+  
+    if not leaderId then
+      Megaphone.DetachMarker()
+    end
+  
+      -- Comparing IDs breaks if the leader is out of range. Use the name instead
+    if lastKnownLeader ~= chatNameFilter then
+      printMsg("Found leader - " .. WStringToString(chatNameFilter))
       Megaphone.AttachMarkerToPlayer()
+    end
   end
 end
 ----------------------------------------------------------------
@@ -385,11 +393,13 @@ end
 
 ----------------------------------------------------------------
 function Megaphone.AttachMarkerToPlayer()
-  if leaderId and Megaphone.Settings.Highlight then
+  if not Megaphone.Settings.Highlight then
+    Megaphone.DetachMarker()
+  elseif not leaderId then
+    Megaphone.DetachMarker()
+  else
     AttachWindowToWorldObject(Megaphone.Windows.Marker, leaderId)
     WindowSetShowing(Megaphone.Windows.Marker, true)
-  else
-    Megaphone.DetachMarker()
   end
 end
 ----------------------------------------------------------------
@@ -403,12 +413,17 @@ end
 
 
 ----------------------------------------------------------------
-function Megaphone.Refresh()
+function Megaphone.ResetMarker()
   Megaphone.DetachMarker()
-
   leaderId = nil
-  chatNameFilter = ""
+end
+----------------------------------------------------------------
 
+
+----------------------------------------------------------------
+function Megaphone.Refresh()
+  Megaphone.ResetMarker()
+  chatNameFilter = ""
 	Megaphone.GroupUpdate()
 end
 ----------------------------------------------------------------
