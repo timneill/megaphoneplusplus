@@ -145,7 +145,6 @@ function Megaphone.Initialize()
   RegisterEventHandler(SystemData.Events.BATTLEGROUP_UPDATED, "Megaphone.GroupUpdate")
   RegisterEventHandler(SystemData.Events.BATTLEGROUP_MEMBER_UPDATED, "Megaphone.GroupUpdate")
   RegisterEventHandler(SystemData.Events.INTERFACE_RELOADED, "Megaphone.GroupUpdate")
-  RegisterEventHandler(SystemData.Events.GROUP_LEAVE, "Megaphone.Refresh")
   RegisterEventHandler(SystemData.Events.LOADING_END, "Megaphone.Refresh")
   RegisterEventHandler(SystemData.Events.PLAYER_ZONE_CHANGED, "Megaphone.Refresh")
   
@@ -163,7 +162,6 @@ function Megaphone.OnShutdown()
   UnregisterEventHandler(SystemData.Events.BATTLEGROUP_UPDATED, "Megaphone.GroupUpdate")
   UnregisterEventHandler(SystemData.Events.BATTLEGROUP_MEMBER_UPDATED, "Megaphone.GroupUpdate")
   UnregisterEventHandler(SystemData.Events.INTERFACE_RELOADED, "Megaphone.GroupUpdate")
-  UnregisterEventHandler(SystemData.Events.GROUP_LEAVE, "Megaphone.Refresh")
   UnregisterEventHandler(SystemData.Events.LOADING_END, "Megaphone.Refresh")
   UnregisterEventHandler(SystemData.Events.PLAYER_ZONE_CHANGED, "Megaphone.Refresh")
 end
@@ -176,7 +174,7 @@ function Megaphone.CreateWindows()
   Megaphone.HideWindow()
 
   CreateWindow(Megaphone.Windows.Marker, true)
-  Megaphone.DetachMarker()
+  Megaphone.HideMarker()
   
 	LabelSetText(Megaphone.Windows.Main.."TitleBarText", L"Megaphone++")
   ButtonSetText(Megaphone.Windows.Main.."CloseButton", L"Close")
@@ -276,6 +274,13 @@ end
 
 ----------------------------------------------------------------
 function Megaphone.GroupUpdate()
+  -- Despite the name, leaving a group using a slash command only triggers
+  -- the group UPDATE event, so we need to double check the status here
+  if not IsWarBandActive() then
+    Megaphone.Reset()
+    return
+  end
+
 	Megaphone.AssignLeader()
 end
 ----------------------------------------------------------------
@@ -297,17 +302,28 @@ end
 
 ----------------------------------------------------------------
 function Megaphone.AssignLeader()
+  if not IsWarBandActive() then
+    return
+  end
+
   local lastKnownLeader = chatNameFilter
 
   -- Get the leader object and see if their name matches our current filter or not
   local leader = Megaphone.FindLeader()
   
   if leader ~= nil then
+    -- Detach marker if it differs from our stored leader
+    if leaderId ~= leader.worldObjNum then
+      Megaphone.HideMarker()
+    end
+
+    -- Assign new leader information
     chatNameFilter = Megaphone.CleanPlayerName(leader.name)
     leaderId = leader.worldObjNum
   
+    -- If the leader ID is missing, they're probably out of range
     if not leaderId then
-      Megaphone.DetachMarker()
+      Megaphone.HideMarker()
     end
   
       -- Comparing IDs breaks if the leader is out of range. Use the name instead
@@ -394,9 +410,9 @@ end
 ----------------------------------------------------------------
 function Megaphone.AttachMarkerToPlayer()
   if not Megaphone.Settings.Highlight then
-    Megaphone.DetachMarker()
+    Megaphone.HideMarker()
   elseif not leaderId then
-    Megaphone.DetachMarker()
+    Megaphone.HideMarker()
   else
     AttachWindowToWorldObject(Megaphone.Windows.Marker, leaderId)
     WindowSetShowing(Megaphone.Windows.Marker, true)
@@ -406,24 +422,26 @@ end
 
 
 ----------------------------------------------------------------
-function Megaphone.DetachMarker()
+function Megaphone.HideMarker()
   WindowSetShowing(Megaphone.Windows.Marker, false)
+
+  -- There is a case where the Window manager kept showing an attached window. Stop that
+  DetachWindowFromWorldObject(Megaphone.Windows.Marker, leaderId)
 end
 ----------------------------------------------------------------
 
 
 ----------------------------------------------------------------
-function Megaphone.ResetMarker()
-  Megaphone.DetachMarker()
+function Megaphone.Reset()
+  Megaphone.HideMarker()
   leaderId = nil
+  chatNameFilter = ""
 end
 ----------------------------------------------------------------
-
 
 ----------------------------------------------------------------
 function Megaphone.Refresh()
-  Megaphone.ResetMarker()
-  chatNameFilter = ""
+  Megaphone.Reset()
 	Megaphone.GroupUpdate()
 end
 ----------------------------------------------------------------
