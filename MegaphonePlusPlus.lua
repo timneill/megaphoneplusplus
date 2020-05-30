@@ -4,7 +4,7 @@ Warhammer Online: Age of Reckoning UI modification that announces the
 messages from the group's leader.
     
 Copyright (C) 2020  Tim Neill
-kinghfb@gmail.com		timneill.net
+kinghfb@gmail.com    timneill.net
 
 Original by Richard Conner rkc@pacbell.net
 
@@ -36,12 +36,12 @@ local showLeaderName = true      -- Local checkbox setting for showing leader na
 local highlightLeader = false    -- Local checkbox setting for highlighting leader
 
 local function printMsg(str)
-	EA_ChatWindow.Print(towstring("<LINK data=\"0\" text=\"[Megaphone++]\" color=\"255,255,50\"> " .. str))
+  EA_ChatWindow.Print(towstring("<LINK data=\"0\" text=\"[Megaphone++]\" color=\"255,255,50\"> " .. str))
 end
 ----------------------------------------------------------------
 -- Taken from GesConstants
 Megaphone.AlertText = {
-	{ id = nil                                                   , name = "Do not alert" }
+  { id = nil                                                   , name = "Do not alert" }
   , { id = SystemData.AlertText.Types.DEFAULT                    , name = "Default" }
   , { id = SystemData.AlertText.Types.COMBAT                     , name = "Combat" }
   , { id = SystemData.AlertText.Types.QUEST_NAME                 , name = "Quest Name" }
@@ -77,7 +77,7 @@ Megaphone.AlertText = {
 }
 
 Megaphone.SoundTypes = {
-	{ id = nil                                           , name = "Do not play a sound"}
+  { id = nil                                           , name = "Do not play a sound"}
   , { id = GameData.Sound.ACTION_FAILED                  , name = "Action Failed"}
   , { id = GameData.Sound.ADVANCE_RANK                   , name = "Advance Rank"}
   , { id = GameData.Sound.ADVANCE_TIER                   , name = "Advance Tier"}
@@ -118,19 +118,19 @@ Megaphone.SoundTypes = {
   , { id = GameData.Sound.WINDOW_CLOSE                   , name = "Window Close"}
   , { id = GameData.Sound.WINDOW_OPEN                    , name = "Window Open"}
   , { id = GameData.Sound.CLOSE_WORLD_MAP                , name = "World Map Close"}
-  , { id = GameData.Sound.OPEN_WORLD_MAP                 , name = "World Map Open"}	          
+  , { id = GameData.Sound.OPEN_WORLD_MAP                 , name = "World Map Open"}            
 }
 ----------------------------------------------------------------
 
 
 ----------------------------------------------------------------
 function Megaphone.Initialize()
-	if not Megaphone.Settings then
-		Megaphone.Settings = {}
+  if not Megaphone.Settings then
+    Megaphone.Settings = {}
     Megaphone.Settings.Font = SystemData.AlertText.Types.QUEST_END
     Megaphone.Settings.Sound = GameData.Sound.QUEST_COMPLETED
-		Megaphone.Settings.ShowName = true
-		Megaphone.Settings.Highlight = false
+    Megaphone.Settings.ShowName = true
+    Megaphone.Settings.Highlight = false
   end
   
   -- Cast to bool in case the settings are empty for this
@@ -141,16 +141,16 @@ function Megaphone.Initialize()
 
   Megaphone.CreateWindows()
   
-	RegisterEventHandler(SystemData.Events.CHAT_TEXT_ARRIVED, "Megaphone.FilterChat")
+  RegisterEventHandler(SystemData.Events.CHAT_TEXT_ARRIVED, "Megaphone.FilterChat")
   RegisterEventHandler(SystemData.Events.BATTLEGROUP_UPDATED, "Megaphone.GroupUpdate")
   RegisterEventHandler(SystemData.Events.BATTLEGROUP_MEMBER_UPDATED, "Megaphone.GroupUpdate")
   RegisterEventHandler(SystemData.Events.INTERFACE_RELOADED, "Megaphone.GroupUpdate")
   RegisterEventHandler(SystemData.Events.LOADING_END, "Megaphone.Refresh")
   RegisterEventHandler(SystemData.Events.PLAYER_ZONE_CHANGED, "Megaphone.Refresh")
   
-	LibSlash.RegisterSlashCmd("megaphonepp", Megaphone.ShowConfig)
+  LibSlash.RegisterSlashCmd("megaphonepp", Megaphone.ShowConfig)
   LibSlash.RegisterSlashCmd("mppp", Megaphone.ShowConfig)
-	
+  
   printMsg("Type /megaphonepp or /mppp to show config.")
 end
 ----------------------------------------------------------------
@@ -158,7 +158,7 @@ end
 
 ----------------------------------------------------------------
 function Megaphone.OnShutdown()
-	UnregisterEventHandler(SystemData.Events.CHAT_TEXT_ARRIVED, "Megaphone.FilterChat")
+  UnregisterEventHandler(SystemData.Events.CHAT_TEXT_ARRIVED, "Megaphone.FilterChat")
   UnregisterEventHandler(SystemData.Events.BATTLEGROUP_UPDATED, "Megaphone.GroupUpdate")
   UnregisterEventHandler(SystemData.Events.BATTLEGROUP_MEMBER_UPDATED, "Megaphone.GroupUpdate")
   UnregisterEventHandler(SystemData.Events.INTERFACE_RELOADED, "Megaphone.GroupUpdate")
@@ -176,12 +176,12 @@ function Megaphone.CreateWindows()
   CreateWindow(Megaphone.Windows.Marker, true)
   Megaphone.HideMarker()
   
-	LabelSetText(Megaphone.Windows.Main.."TitleBarText", L"Megaphone++")
+  LabelSetText(Megaphone.Windows.Main.."TitleBarText", L"Megaphone++")
   ButtonSetText(Megaphone.Windows.Main.."CloseButton", L"Close")
   ButtonSetText(Megaphone.Windows.Main.."TestButton", L"Test")
   
-	Megaphone.OptionsInitExtra()
-	Megaphone.OptionsInitSounds()
+  Megaphone.OptionsInitExtra()
+  Megaphone.OptionsInitSounds()
   Megaphone.OptionsInitFonts()
 end
 ----------------------------------------------------------------
@@ -189,40 +189,40 @@ end
 
 ----------------------------------------------------------------
 function Megaphone.OptionsInitExtra()
-	ButtonSetPressedFlag(Megaphone.Windows.Main.."ShowLeaderCheckbox", showLeaderName)
+  ButtonSetPressedFlag(Megaphone.Windows.Main.."ShowLeaderCheckbox", showLeaderName)
   LabelSetText(Megaphone.Windows.Main.."ShowLeaderLabel", L"Show Leader Name")
   
   ButtonSetPressedFlag(Megaphone.Windows.Main.."HighlightLeaderCheckbox", highlightLeader)
-	LabelSetText(Megaphone.Windows.Main.."HighlightLeaderLabel", L"Highlight Leader")
+  LabelSetText(Megaphone.Windows.Main.."HighlightLeaderLabel", L"Highlight Leader")
 end
 ----------------------------------------------------------------
 
 
 ----------------------------------------------------------------
 function Megaphone.OptionsInitSounds()
-	LabelSetText(Megaphone.Windows.Main.."SFXTitleLabel", L"Alert Sound")
-	for k, snd in ipairs(Megaphone.SoundTypes) do
-	 	ComboBoxAddMenuItem(Megaphone.Windows.Main.."SFXComboBox", towstring(snd.name))
-	end
+  LabelSetText(Megaphone.Windows.Main.."SFXTitleLabel", L"Alert Sound")
+  for k, snd in ipairs(Megaphone.SoundTypes) do
+     ComboBoxAddMenuItem(Megaphone.Windows.Main.."SFXComboBox", towstring(snd.name))
+  end
 end
 ----------------------------------------------------------------
 
 
 ----------------------------------------------------------------
 function Megaphone.OptionsInitFonts()
-	LabelSetText(Megaphone.Windows.Main.."FontTitleLabel", L"Alert Text Style")
-	for k, fnt in ipairs(Megaphone.AlertText) do
-	 	ComboBoxAddMenuItem(Megaphone.Windows.Main.."FontComboBox", towstring(fnt.name))
-	end
+  LabelSetText(Megaphone.Windows.Main.."FontTitleLabel", L"Alert Text Style")
+  for k, fnt in ipairs(Megaphone.AlertText) do
+     ComboBoxAddMenuItem(Megaphone.Windows.Main.."FontComboBox", towstring(fnt.name))
+  end
 end
 ----------------------------------------------------------------
 
 
 ----------------------------------------------------------------
 function Megaphone.ShowConfig()
-	ComboBoxSetSelectedMenuItem(Megaphone.Windows.Main.."SFXComboBox", Megaphone.IndexFromId(Megaphone.SoundTypes, Megaphone.Settings.Sound))
-	ComboBoxSetSelectedMenuItem(Megaphone.Windows.Main.."FontComboBox", Megaphone.IndexFromId(Megaphone.AlertText, Megaphone.Settings.Font))
-	WindowSetShowing(Megaphone.Windows.Main, true)
+  ComboBoxSetSelectedMenuItem(Megaphone.Windows.Main.."SFXComboBox", Megaphone.IndexFromId(Megaphone.SoundTypes, Megaphone.Settings.Sound))
+  ComboBoxSetSelectedMenuItem(Megaphone.Windows.Main.."FontComboBox", Megaphone.IndexFromId(Megaphone.AlertText, Megaphone.Settings.Font))
+  WindowSetShowing(Megaphone.Windows.Main, true)
 end
 ----------------------------------------------------------------
 
@@ -254,14 +254,14 @@ end
 
 ----------------------------------------------------------------
 function Megaphone.HideWindow()
-	WindowSetShowing(Megaphone.Windows.Main, false)
+  WindowSetShowing(Megaphone.Windows.Main, false)
 end
 ----------------------------------------------------------------
 
 
 ----------------------------------------------------------------
 function Megaphone.SaveSettings()
-	Megaphone.Settings.Font = Megaphone.AlertText[ComboBoxGetSelectedMenuItem(Megaphone.Windows.Main.."FontComboBox")].id
+  Megaphone.Settings.Font = Megaphone.AlertText[ComboBoxGetSelectedMenuItem(Megaphone.Windows.Main.."FontComboBox")].id
   Megaphone.Settings.Sound = Megaphone.SoundTypes[ComboBoxGetSelectedMenuItem(Megaphone.Windows.Main.."SFXComboBox")].id
   Megaphone.Settings.ShowName = ButtonGetPressedFlag(Megaphone.Windows.Main.."ShowLeaderCheckbox")
   Megaphone.Settings.Highlight = ButtonGetPressedFlag(Megaphone.Windows.Main.."HighlightLeaderCheckbox")
@@ -281,7 +281,7 @@ function Megaphone.GroupUpdate()
     return
   end
 
-	Megaphone.AssignLeader()
+  Megaphone.AssignLeader()
 end
 ----------------------------------------------------------------
 
@@ -340,12 +340,12 @@ end
 function Megaphone.FindLeader()
   local wb = PartyUtils.GetWarbandData()
   
-	for _, grp in ipairs(wb) do
-		for _, player in ipairs(grp.players) do
+  for _, grp in ipairs(wb) do
+    for _, player in ipairs(grp.players) do
       if player.isGroupLeader then
         return player
-			end
-		end
+      end
+    end
   end
   
   return nil
@@ -355,16 +355,16 @@ end
 
 ----------------------------------------------------------------
 function Megaphone.FilterChat()
-	local chatType = GameData.ChatData.type
-	local chatSender = Megaphone.CleanPlayerName(GameData.ChatData.name)
-	local chatText = GameData.ChatData.text
+  local chatType = GameData.ChatData.type
+  local chatSender = Megaphone.CleanPlayerName(GameData.ChatData.name)
+  local chatText = GameData.ChatData.text
 
-	if chatSender == chatNameFilter then 
-		-- Include only group-type chats
-    	if chatType == SystemData.ChatLogFilters.GROUP or chatType == SystemData.ChatLogFilters.BATTLEGROUP or chatType == SystemData.ChatLogFilters.SCENARIO_GROUPS then
-			  Megaphone.ShowNotification(chatSender, chatText)
-		  end
-	end
+  if chatSender == chatNameFilter then 
+    -- Include only group-type chats
+      if chatType == SystemData.ChatLogFilters.GROUP or chatType == SystemData.ChatLogFilters.BATTLEGROUP or chatType == SystemData.ChatLogFilters.SCENARIO_GROUPS then
+        Megaphone.ShowNotification(chatSender, chatText)
+      end
+  end
 end
 ----------------------------------------------------------------
 
@@ -378,9 +378,9 @@ function Megaphone.ShowNotification(chatSender, chatText)
   if (Megaphone.Settings.Font == nil) then
     return
   end
-	
-	if Megaphone.Settings.ShowName then
-		chatText = chatSender .. L": " .. chatText
+  
+  if Megaphone.Settings.ShowName then
+    chatText = chatSender .. L": " .. chatText
   end
 
   AlertTextWindow.AddLine(Megaphone.Settings.Font, chatText)
@@ -397,12 +397,12 @@ function Megaphone.CleanPlayerName(playerName)
   local cleanPlayerName = wstring.gsub(playerName, L"%^%a,in", L"")
 
   if cleanPlayerName == "" then
-		return ""
+    return ""
   end
   
-	cleanPlayerName = wstring.gsub(towstring(cleanPlayerName), L"%^%a", L"")
+  cleanPlayerName = wstring.gsub(towstring(cleanPlayerName), L"%^%a", L"")
 
-	return cleanPlayerName
+  return cleanPlayerName
 end
 ----------------------------------------------------------------
 
@@ -442,6 +442,6 @@ end
 ----------------------------------------------------------------
 function Megaphone.Refresh()
   Megaphone.Reset()
-	Megaphone.GroupUpdate()
+  Megaphone.GroupUpdate()
 end
 ----------------------------------------------------------------
