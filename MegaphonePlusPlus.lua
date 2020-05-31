@@ -413,6 +413,9 @@ function Megaphone.HideMarker()
   WindowSetShowing(Megaphone.Windows.Marker, false)
 
   -- There is a case where the Window manager kept showing an attached window. Stop that
+  if leaderId == nil then
+  end
+
   DetachWindowFromWorldObject(Megaphone.Windows.Marker, leaderId)
 end
 ----------------------------------------------------------------
