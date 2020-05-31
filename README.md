@@ -5,7 +5,7 @@ Warhammer Online: Age of Reckoning UI modification that announces the messages f
 Have you ever been in a warband and find yourself sitting alone in a zone wondering where you're supposed to be? This plugin helps you stay informed on the warband's plans by announcing the leader's text on screen so you don't have to keep scanning the chat window. 
 
 ## Installation
-Simply unzip the addon contents and place in your add directory. This is probably something like:
+Simply unzip the addon contents and place in your add on directory. This is probably something like:
 
 ```
 <ROR Install Dir>/Interface/AddOns/
