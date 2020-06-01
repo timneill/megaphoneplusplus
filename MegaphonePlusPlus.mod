@@ -17,8 +17,6 @@
 		<Files>
 			<File name="MegaphonePlusPlus.lua" />
 			<File name="MegaphonePlusPlus.xml" />
-
-            <!-- <File name="Textures/EA_ScenarioSummary01_d5.xml" /> -->
 		</Files>
 
 		<SavedVariables>
