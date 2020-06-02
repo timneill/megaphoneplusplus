@@ -18,6 +18,7 @@ Megaphone.Windows.Marker = "MegaphoneMarker"
 
 local leaderId = nil             -- The object ID of the leader
 local chatNameFilter = ""        -- The player name to filter for in chat
+local selfName = ""              -- It's me!
 
 local showLeaderName = true      -- Local checkbox setting for showing leader name in alert text
 local highlightLeader = false    -- Local checkbox setting for highlighting leader
@@ -137,6 +138,8 @@ function Megaphone.Initialize()
   
   LibSlash.RegisterSlashCmd("megaphonepp", Megaphone.ShowConfig)
   LibSlash.RegisterSlashCmd("mppp", Megaphone.ShowConfig)
+
+  selfName = Megaphone.CleanPlayerName(GameData.Player.name)
   
   printMsg("Type /megaphonepp or /mppp to show config.")
 end
@@ -346,7 +349,8 @@ function Megaphone.FilterChat()
   local chatSender = Megaphone.CleanPlayerName(GameData.ChatData.name)
   local chatText = GameData.ChatData.text
 
-  if chatSender == chatNameFilter then 
+  -- Filter chats for the warband leader (if it isn't us)
+  if chatSender == chatNameFilter and chatSender ~= selfName then 
     -- Include only group-type chats
       if chatType == SystemData.ChatLogFilters.GROUP or chatType == SystemData.ChatLogFilters.BATTLEGROUP or chatType == SystemData.ChatLogFilters.SCENARIO_GROUPS then
         Megaphone.ShowNotification(chatSender, chatText)
