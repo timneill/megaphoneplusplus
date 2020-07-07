@@ -362,6 +362,9 @@ end
 
 ----------------------------------------------------------------
 function Megaphone.ShowNotification(chatSender, chatText)
+  -- Filter out some cruft that might pop up when people stylise text. Kinda messy but functional
+  chatText = towstring(string.gsub(string.gsub(WStringToString(chatText), "\" color=\"(.+)\">", ""), "<LINK data=\"0\" text=\"", ""))
+
   if (Megaphone.Settings.Sound ~= nil) then
     PlaySound(Megaphone.Settings.Sound)
   end
