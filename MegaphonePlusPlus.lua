@@ -362,17 +362,27 @@ end
 
 ----------------------------------------------------------------
 function Megaphone.ShowNotification(chatSender, chatText)
-  -- Filter out some cruft that might pop up when people stylise text. Kinda messy but functional
-  chatText = towstring(string.gsub(string.gsub(WStringToString(chatText), "\" color=\"(.+)\">", ""), "<LINK data=\"0\" text=\"", ""))
+  local strChatText = WStringToString(chatText)
+
+  -- Check if the "text" field is present
+  local startPos, endPos = string.find(strChatText, "\" text=\"([^\"]+)\"")
+  if startPos then
+    -- Extract the value inside the "text" field
+    local extractedText = string.sub(strChatText, startPos + 8, endPos - 1)
+    chatText = towstring(extractedText)
+  else
+    -- No "text" field, proceed as normal
+    chatText = towstring(strChatText)
+  end
 
   if (Megaphone.Settings.Sound ~= nil) then
     PlaySound(Megaphone.Settings.Sound)
   end
-  
+
   if (Megaphone.Settings.Font == nil) then
     return
   end
-  
+
   if Megaphone.Settings.ShowName then
     chatText = chatSender .. L": " .. chatText
   end
